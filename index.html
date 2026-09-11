@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta id="theme-color" name="theme-color" content="#1b2838" />
+    <title>Minesweeper</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("minesweeper-theme");
+        if (["system", "light", "dark"].includes(savedTheme)) document.documentElement.dataset.theme = savedTheme;
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-card" aria-labelledby="game-title">
+        <header class="game-header">
+          <div>
+            <p class="eyebrow">Classic puzzle</p>
+            <h1 id="game-title">Minesweeper</h1>
+          </div>
+          <div class="counter-group" aria-label="Game counters">
+            <div class="counter">
+              <span class="counter-label">Mines left</span>
+              <output id="mine-counter" class="counter-value" aria-live="polite">010</output>
+            </div>
+            <div class="counter">
+              <span class="counter-label">Time</span>
+              <output id="timer-counter" class="counter-value" aria-live="off">000</output>
+            </div>
+          </div>
+        </header>
+
+        <section class="controls" aria-label="Game controls">
+          <label class="field-label" for="difficulty-select">
+            Difficulty
+            <select id="difficulty-select" name="difficulty">
+              <option value="beginner">Beginner — 9 × 9, 10 mines</option>
+              <option value="intermediate">Intermediate — 16 × 16, 40 mines</option>
+              <option value="expert">Expert — 30 × 16, 99 mines</option>
+            </select>
+          </label>
+          <label class="field-label" for="theme-select">
+            Theme
+            <select id="theme-select" name="theme">
+              <option value="system">System (auto)</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
+          <button id="new-game-button" class="button button-primary" type="button">New Game</button>
+        </section>
+
+        <p id="status-line" class="status-line" role="status" aria-live="polite">Ready. Reveal a square to begin.</p>
+
+        <div id="board-scroll" class="board-scroll" tabindex="0" aria-label="Scrollable Minesweeper board">
+          <div id="board" class="board" role="group" aria-label="Minesweeper board"></div>
+        </div>
+
+        <section class="mode-controls" aria-labelledby="mode-heading">
+          <div>
+            <h2 id="mode-heading">Tap mode</h2>
+            <p>Choose what tapping a covered square does.</p>
+          </div>
+          <div class="mode-toggle" role="group" aria-label="Touch action mode">
+            <button id="reveal-mode-button" class="mode-button is-selected" type="button" aria-pressed="true">
+              Reveal mode
+            </button>
+            <button id="flag-mode-button" class="mode-button" type="button" aria-pressed="false">
+              Flag mode
+            </button>
+          </div>
+        </section>
+
+      </section>
+    </main>
+
+    <dialog id="result-dialog" class="result-dialog" aria-labelledby="result-title" aria-describedby="result-message result-details">
+      <div class="result-content">
+        <p id="result-kicker" class="eyebrow">Game complete</p>
+        <h2 id="result-title" tabindex="-1">You won!</h2>
+        <p id="result-message"></p>
+        <p id="result-details" class="result-details"></p>
+        <div class="dialog-actions">
+          <button id="play-again-button" class="button button-primary" type="button">Play Again</button>
+          <button id="close-result-button" class="button button-secondary" type="button">Close panel</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script defer src="js/game-state.js"></script>
+    <script defer src="js/game-rules.js"></script>
+    <script defer src="js/renderer.js"></script>
+    <script defer src="js/app.js"></script>
+  </body>
+</html>
