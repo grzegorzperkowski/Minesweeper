@@ -17,21 +17,44 @@
     <main class="app-shell">
       <section class="game-card" aria-labelledby="game-title">
         <header class="game-header">
+          <div class="brand-lockup">
+            <span class="game-mark" aria-hidden="true">
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </span>
+            <h1 id="game-title">Minesweeper<span class="brand-dot">.</span></h1>
+          </div>
+          <label class="field-label theme-selector" for="theme-select">
+            Appearance
+            <select id="theme-select" name="theme">
+              <option value="system">Auto</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
+        </header>
+
+        <section class="game-intro" aria-labelledby="game-heading">
           <div>
             <p class="eyebrow">Classic puzzle</p>
-            <h1 id="game-title">Minesweeper</h1>
+            <h2 id="game-heading">Clear the field.</h2>
+            <p class="game-description">One board. Every square matters.</p>
           </div>
-          <div class="counter-group" aria-label="Game counters">
-            <div class="counter">
-              <span class="counter-label">Mines left</span>
-              <output id="mine-counter" class="counter-value" aria-live="polite">010</output>
-            </div>
-            <div class="counter">
-              <span class="counter-label">Time</span>
-              <output id="timer-counter" class="counter-value" aria-live="off">000</output>
+          <div class="game-overview">
+            <p class="offline-note"><span aria-hidden="true">●</span> Made to play offline</p>
+            <div class="counter-group" aria-label="Game counters">
+              <div class="counter">
+                <span class="counter-label">Mines left</span>
+                <output id="mine-counter" class="counter-value" aria-live="polite">010</output>
+              </div>
+              <div class="counter">
+                <span class="counter-label">Time</span>
+                <output id="timer-counter" class="counter-value" aria-live="off">000</output>
+              </div>
             </div>
           </div>
-        </header>
+        </section>
 
         <section class="controls" aria-label="Game controls">
           <label class="field-label" for="difficulty-select">
@@ -40,14 +63,6 @@
               <option value="beginner">Beginner — 9 × 9, 10 mines</option>
               <option value="intermediate">Intermediate — 16 × 16, 40 mines</option>
               <option value="expert">Expert — 30 × 16, 99 mines</option>
-            </select>
-          </label>
-          <label class="field-label" for="theme-select">
-            Theme
-            <select id="theme-select" name="theme">
-              <option value="system">System (auto)</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
             </select>
           </label>
           <button id="new-game-button" class="button button-primary" type="button">New Game</button>
@@ -94,5 +109,6 @@
     <script defer src="js/game-rules.js"></script>
     <script defer src="js/renderer.js"></script>
     <script defer src="js/app.js"></script>
-  </body>
+  <script data-goatcounter="https://minesweeper.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</body>
 </html>

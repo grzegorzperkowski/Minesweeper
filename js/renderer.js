@@ -87,7 +87,7 @@ function renderStatus(statusElement, game, action) {
   const messages = {
     ready: "Ready. Reveal a square to begin.",
     newGame: "New game ready. Reveal a square to place the mines and begin.",
-    restored: "Your saved game is ready to continue.",
+    restored: "Saved game restored.",
     revealed: "Square revealed.",
     flagged: "Flag placed.",
     unflagged: "Flag removed.",

@@ -178,7 +178,7 @@ button:focus-visible, select:focus-visible, .board-scroll:focus-visible, .cell:f
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 20px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -192,7 +192,53 @@ button:focus-visible, select:focus-visible, .board-scroll:focus-visible, .cell:f
 }
 
 h1, h2, p { margin-top: 0; }
-h1 { margin-bottom: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1; }
+h1 { margin-bottom: 0; font-size: clamp(1.75rem, 4vw, 2.2rem); line-height: 1; }
+
+.brand-lockup { display: flex; align-items: center; gap: 14px; }
+.brand-dot { color: var(--focus); }
+.game-mark {
+  display: grid;
+  grid-template-columns: repeat(3, 7px);
+  grid-template-rows: repeat(3, 7px);
+  gap: 3px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-raised);
+}
+.game-mark span { width: 7px; height: 7px; border-radius: 1px; background: var(--success); }
+.game-mark span:nth-child(2), .game-mark span:nth-child(6), .game-mark span:nth-child(7) { opacity: .4; }
+.game-mark span:nth-child(5) { background: var(--focus); }
+
+.game-header .theme-selector {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-weight: 650;
+}
+.theme-selector select { width: 116px; min-height: 50px; padding-block: 7px; }
+
+.game-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 0 4px;
+}
+.game-intro .eyebrow { margin-bottom: 8px; color: var(--success); }
+.game-intro h2 {
+  margin-bottom: 10px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.9rem, 4vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1;
+}
+.game-description { margin-bottom: 0; color: var(--muted); }
+.game-overview { display: grid; justify-items: end; gap: 14px; }
+.offline-note { margin: 0; color: var(--muted); font-size: .9rem; }
+.offline-note span { margin-right: 7px; color: var(--success); font-size: .8em; }
 
 .counter-group { display: flex; gap: 10px; }
 .counter {
@@ -315,7 +361,11 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
 @media (max-width: 650px) {
   :root { --cell-size: 30px; }
   .game-card { padding: 18px; border-radius: 16px; }
-  .game-header, .controls, .mode-controls { align-items: stretch; flex-direction: column; }
+  .game-header, .game-intro, .controls, .mode-controls { align-items: stretch; flex-direction: column; }
+  .game-header .theme-selector { justify-content: space-between; }
+  .theme-selector select { width: min(100%, 220px); }
+  .game-overview { justify-items: stretch; }
+  .offline-note { text-align: left; }
   .controls .button { width: 100%; }
   .counter-group { width: 100%; }
   .counter { flex: 1; }

@@ -150,7 +150,9 @@ function hydrateGame(snapshot) {
     for (let rowOffset = -1; rowOffset <= 1; rowOffset += 1) {
       for (let columnOffset = -1; columnOffset <= 1; columnOffset += 1) {
         if (rowOffset === 0 && columnOffset === 0) continue;
-        adjacentMines += Number(restoredGame.cells[rowIndex + rowOffset]?.[columnIndex + columnOffset]?.mine);
+        if (restoredGame.cells[rowIndex + rowOffset]?.[columnIndex + columnOffset]?.mine) {
+          adjacentMines += 1;
+        }
       }
     }
     cell.adjacentMines = adjacentMines;
