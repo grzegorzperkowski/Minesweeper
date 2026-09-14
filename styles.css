@@ -210,15 +210,56 @@ h1 { margin-bottom: 0; font-size: clamp(1.75rem, 4vw, 2.2rem); line-height: 1; }
 .game-mark span:nth-child(2), .game-mark span:nth-child(6), .game-mark span:nth-child(7) { opacity: .4; }
 .game-mark span:nth-child(5) { background: var(--focus); }
 
-.game-header .theme-selector {
+.theme-toggle {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 12px;
-  color: var(--muted);
-  font-weight: 650;
+  justify-content: center;
+  gap: 6px;
+  min-width: 80px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface-raised);
+  cursor: pointer;
+  touch-action: manipulation;
 }
-.theme-selector select { width: 116px; min-height: 50px; padding-block: 7px; }
+.theme-toggle:hover { border-color: var(--accent-dark); background: var(--secondary-hover); }
+.theme-toggle:active { transform: translateY(1px); }
+.theme-sun, .theme-moon {
+  width: 14px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1;
+  transition: color .18s, opacity .18s;
+}
+.theme-track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  flex: 0 0 auto;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--page);
+}
+.theme-track > span {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .27);
+  transition: transform .18s ease;
+}
+.theme-toggle[aria-checked="true"] .theme-track > span { transform: translateX(14px); }
+.theme-toggle[aria-checked="false"] .theme-sun,
+.theme-toggle[aria-checked="true"] .theme-moon { color: var(--accent); opacity: 1; }
+.theme-toggle[aria-checked="false"] .theme-moon,
+.theme-toggle[aria-checked="true"] .theme-sun { opacity: .45; }
 
 .game-intro {
   display: flex;
@@ -362,8 +403,7 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
   :root { --cell-size: 30px; }
   .game-card { padding: 18px; border-radius: 16px; }
   .game-header, .game-intro, .controls, .mode-controls { align-items: stretch; flex-direction: column; }
-  .game-header .theme-selector { justify-content: space-between; }
-  .theme-selector select { width: min(100%, 220px); }
+  .game-header .theme-toggle { align-self: flex-start; }
   .game-overview { justify-items: stretch; }
   .offline-note { text-align: left; }
   .controls .button { width: 100%; }

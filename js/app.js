@@ -36,7 +36,7 @@ function registerServiceWorker() {
 const elements = {
   board: document.querySelector("#board"),
   difficultySelect: document.querySelector("#difficulty-select"),
-  themeSelect: document.querySelector("#theme-select"),
+  themeToggle: document.querySelector("#theme-toggle"),
   newGameButton: document.querySelector("#new-game-button"),
   revealModeButton: document.querySelector("#reveal-mode-button"),
   flagModeButton: document.querySelector("#flag-mode-button"),
@@ -77,9 +77,12 @@ function activeTheme(theme) {
 
 function setTheme(theme, persist = true) {
   const selectedTheme = ["system", "light", "dark"].includes(theme) ? theme : "system";
+  const resolvedTheme = activeTheme(selectedTheme);
+  const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = selectedTheme;
-  elements.themeSelect.value = selectedTheme;
-  document.querySelector("#theme-color").content = activeTheme(selectedTheme) === "dark" ? "#0b1119" : "#111a26";
+  elements.themeToggle.setAttribute("aria-checked", String(resolvedTheme === "dark"));
+  elements.themeToggle.title = `Switch to ${nextTheme} theme`;
+  document.querySelector("#theme-color").content = resolvedTheme === "dark" ? "#0b1119" : "#111a26";
 
   if (!persist) return;
   try {
@@ -328,7 +331,10 @@ elements.difficultySelect.addEventListener("change", () => {
     elements.difficultySelect.value = game.difficultyKey;
   }
 });
-elements.themeSelect.addEventListener("change", () => setTheme(elements.themeSelect.value));
+elements.themeToggle.addEventListener("click", () => {
+  const nextTheme = activeTheme(document.documentElement.dataset.theme) === "dark" ? "light" : "dark";
+  setTheme(nextTheme);
+});
 const updateSystemTheme = () => {
   if (document.documentElement.dataset.theme === "system") setTheme("system", false);
 };

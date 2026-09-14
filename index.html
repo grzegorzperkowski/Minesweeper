@@ -25,14 +25,11 @@
             </span>
             <h1 id="game-title">Minesweeper<span class="brand-dot">.</span></h1>
           </div>
-          <label class="field-label theme-selector" for="theme-select">
-            Appearance
-            <select id="theme-select" name="theme">
-              <option value="system">Auto</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </label>
+          <button id="theme-toggle" class="theme-toggle" type="button" role="switch" aria-label="Dark theme" aria-checked="false" title="Switch to dark theme">
+            <span class="theme-sun" aria-hidden="true">☀</span>
+            <span class="theme-track" aria-hidden="true"><span></span></span>
+            <span class="theme-moon" aria-hidden="true">☾</span>
+          </button>
         </header>
 
         <section class="game-intro" aria-labelledby="game-heading">
