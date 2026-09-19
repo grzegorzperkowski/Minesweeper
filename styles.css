@@ -418,3 +418,6 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
   .board.is-lost { box-shadow: 0 0 0 4px var(--danger); }
   .cell.is-exploded { outline: 3px solid #4c0f15; outline-offset: -5px; transform: none; }
 }
+
+.playground-link { margin-top: 1.5rem; text-align: center; font-size: .9rem; }
+.playground-link a { color: inherit; }

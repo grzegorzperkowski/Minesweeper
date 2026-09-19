@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta id="theme-color" name="theme-color" content="#1b2838" />
+    <meta name="description" content="A polished, offline-ready Minesweeper game." />
     <title>Minesweeper</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="assets/icons/icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
     <script>
       try {
         const savedTheme = localStorage.getItem("minesweeper-theme");
@@ -12,6 +16,7 @@
       } catch {}
     </script>
     <link rel="stylesheet" href="styles.css" />
+    <script src="pwa-register.js" data-pwa-register defer></script>
   </head>
   <body>
     <main class="app-shell">
@@ -87,6 +92,7 @@
         </section>
 
       </section>
+      <footer class="playground-link"><a href="/mygame/">More games in Playground</a></footer>
     </main>
 
     <dialog id="result-dialog" class="result-dialog" aria-labelledby="result-title" aria-describedby="result-message result-details">

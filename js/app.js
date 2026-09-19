@@ -3,36 +3,6 @@ const { DIFFICULTIES, createGame } = window.MinesweeperState;
 const { revealCell, toggleFlag } = window.MinesweeperRules;
 const { renderBoard, renderGameInfo, renderMode, renderStatus, showResult } = window.MinesweeperRenderer;
 
-function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) return;
-
-  // A subsequent controller means a newly installed worker has taken over.
-  // Reload once so an open tab immediately runs the matching app shell.
-  const wasAlreadyControlled = navigator.serviceWorker.controller !== null;
-  let hasReloadedForUpdate = false;
-
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (!wasAlreadyControlled || hasReloadedForUpdate) return;
-    hasReloadedForUpdate = true;
-    window.location.reload();
-  });
-
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js", {
-      scope: "./",
-      // Check the worker script itself against the server instead of an HTTP
-      // cache, so a deployed worker update is discovered promptly.
-      updateViaCache: "none",
-    }).then((registration) => {
-      // Browsers may throttle their automatic update checks. Request one on
-      // every app load; failures are harmless because the active app remains.
-      registration.update().catch(() => {});
-    }).catch(() => {
-      // The game continues normally when workers are unsupported or blocked.
-    });
-  }, { once: true });
-}
-
 const elements = {
   board: document.querySelector("#board"),
   difficultySelect: document.querySelector("#difficulty-select"),
@@ -55,6 +25,7 @@ const elements = {
 const THEME_STORAGE_KEY = "minesweeper-theme";
 const GAME_STORAGE_KEY = "minesweeper-game-state";
 const LAST_DIFFICULTY_STORAGE_KEY = "minesweeper-last-difficulty";
+const RESULT_STORAGE_KEY = "playground.result.minesweeper.v1";
 const GAME_STORAGE_VERSION = 1;
 const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -268,6 +239,21 @@ function completeGame(action) {
   stopTimer();
   render(action);
   saveGame();
+  try {
+    const previous = JSON.parse(window.localStorage.getItem(RESULT_STORAGE_KEY));
+    const stats = previous?.version === 1 && previous.app === "minesweeper" && previous.stats && typeof previous.stats === "object" ? previous.stats : {};
+    const wins = (Number.isSafeInteger(stats.wins) ? stats.wins : 0) + Number(action === "won");
+    const losses = (Number.isSafeInteger(stats.losses) ? stats.losses : 0) + Number(action === "lost");
+    const fastestWins = stats.fastestWins && typeof stats.fastestWins === "object" ? { ...stats.fastestWins } : {};
+    if (action === "won") fastestWins[game.difficultyKey] = Math.min(Number(fastestWins[game.difficultyKey]) || Infinity, game.timer);
+    const fastest = Object.entries(fastestWins).sort((a, b) => a[1] - b[1])[0];
+    const difficultyName = key => key ? key[0].toUpperCase() + key.slice(1) : "";
+    window.localStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify({
+      version: 1, app: "minesweeper", updatedAt: Date.now(),
+      summary: { primary: `${wins} win${wins === 1 ? "" : "s"}`, secondary: fastest ? `${difficultyName(fastest[0])} best: ${fastest[1]}s` : `${losses} loss${losses === 1 ? "" : "es"}` },
+      stats: { wins, losses, fastestWins, last: { result: action, difficulty: game.difficultyKey, seconds: game.timer, completedAt: Date.now() } }
+    }));
+  } catch { /* Results are optional when storage is unavailable. */ }
   if (action === "lost") {
     elements.board.classList.remove("loss-feedback");
     // Force a new animation even if an earlier loss class has not painted yet.
@@ -352,7 +338,6 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveGame();
 });
 
-registerServiceWorker();
 setTheme(savedTheme(), false);
 const restoredGame = savedGame();
 if (restoredGame) {
