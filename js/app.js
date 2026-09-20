@@ -4,6 +4,7 @@ const { revealCell, toggleFlag } = window.MinesweeperRules;
 const { renderBoard, renderGameInfo, renderMode, renderStatus, showResult } = window.MinesweeperRenderer;
 
 const elements = {
+  gameCard: document.querySelector(".game-card"),
   board: document.querySelector("#board"),
   difficultySelect: document.querySelector("#difficulty-select"),
   themeToggle: document.querySelector("#theme-toggle"),
@@ -220,6 +221,7 @@ function startTimer() {
 }
 
 function render(action) {
+  elements.gameCard.style.setProperty("--columns", game.difficulty.columns);
   renderBoard(elements.board, game);
   renderGameInfo(elements, game);
   renderMode(elements, inputMode);

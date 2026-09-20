@@ -167,7 +167,7 @@ button:focus-visible, select:focus-visible, .board-scroll:focus-visible, .cell:f
 .app-shell { padding: clamp(16px, 4vw, 48px) 16px 48px; }
 
 .game-card {
-  width: min(100%, 1120px);
+  width: min(100%, max(36rem, calc(var(--columns) * var(--cell-size) + 5.5rem)));
   margin: 0 auto;
   padding: clamp(18px, 3vw, 32px);
   border: 1px solid var(--card-border);
@@ -323,7 +323,7 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
 }
 .mode-controls h2 { margin: 0 0 3px; font-size: 1rem; }
 .mode-controls p { margin: 0; color: var(--muted); font-size: .86rem; }
-.mode-toggle { display: flex; flex-wrap: wrap; gap: 6px; }
+.mode-toggle { display: flex; flex: 0 0 auto; flex-wrap: nowrap; gap: 6px; }
 .mode-button { min-height: 38px; padding: 7px 12px; border-color: var(--mode-border); color: var(--ink); background: var(--surface-raised); }
 .mode-button[aria-pressed="true"] { border-color: var(--accent-dark); color: var(--on-accent); background: var(--accent); }
 

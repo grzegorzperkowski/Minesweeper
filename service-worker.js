@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "minesweeper-shell-";
-const CACHE_NAME = `${CACHE_PREFIX}v3`;
+const CACHE_NAME = `${CACHE_PREFIX}v4`;
 const NETWORK_TIMEOUT_MS = 1800;
 const ROOT = new URL("./", self.registration.scope);
 const INDEX_URL = new URL("index.html", ROOT).href;
@@ -46,4 +46,3 @@ self.addEventListener("fetch", event => {
   if (request.method !== "GET" || url.origin !== ROOT.origin || !url.pathname.startsWith(ROOT.pathname)) return;
   event.respondWith(request.mode === "navigate" ? networkFirst(request) : staleWhileRevalidate(request, event));
 });
-
