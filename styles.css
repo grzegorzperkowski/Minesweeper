@@ -43,6 +43,8 @@
   --number-7: #2c3847;
   --number-8: #5b6571;
   --cell-size: 32px;
+  --columns: 9;
+  --rows: 9;
   --radius: 14px;
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -150,6 +152,7 @@
 
 body {
   min-width: 320px;
+  min-height: 100vh;
   margin: 0;
   background: radial-gradient(circle at 15% 5%, var(--page-highlight) 0, var(--page) 38rem);
 }
@@ -337,7 +340,14 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
   background: var(--board-frame);
   box-shadow: inset 1px 1px 3px rgba(0, 0, 0, .34);
 }
-.board { display: grid; width: max-content; grid-template-columns: repeat(var(--columns), var(--cell-size)); border: 2px solid var(--board-border); }
+.board {
+  display: grid;
+  width: max-content;
+  min-width: calc(var(--columns) * var(--cell-size));
+  min-height: calc(var(--rows) * var(--cell-size));
+  grid-template-columns: repeat(var(--columns), var(--cell-size));
+  border: 2px solid var(--board-border);
+}
 
 .cell {
   display: grid;
@@ -420,5 +430,9 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
   .cell.is-exploded { outline: 3px solid #4c0f15; outline-offset: -5px; transform: none; }
 }
 
-.playground-link { margin-top: 1.5rem; text-align: center; font-size: .9rem; }
+.playground-link { margin-top: 1.5rem; text-align: center; font-size: .9rem; color: #d5dee8; }
 .playground-link a { color: inherit; }
+html .playground-breadcrumb {
+  color: #e8eef4;
+  background: rgb(255 255 255 / 12%);
+}

@@ -226,7 +226,7 @@ function render(action) {
   renderStatus(elements.statusLine, game, action);
 }
 
-function startNewGame(difficultyKey, action = "ready") {
+function startNewGame(difficultyKey, action = "ready", { focus = true } = {}) {
   stopTimer();
   pendingConfirm = null;
   game = createGame(difficultyKey);
@@ -235,7 +235,7 @@ function startNewGame(difficultyKey, action = "ready") {
   if (elements.confirmDialog.open) elements.confirmDialog.close();
   render(action);
   saveGame();
-  elements.newGameButton.focus();
+  if (focus) elements.newGameButton.focus();
 }
 
 function requestRestart({ title = "Restart this game?", acceptLabel = "New Game", onAccept, onCancel, resumeFocus } = {}) {
@@ -408,6 +408,6 @@ if (restoredGame) {
   if (game.state === "playing") startTimer();
   render("restored");
 } else {
-  startNewGame(savedDifficulty());
+  startNewGame(savedDifficulty(), "ready", { focus: false });
 }
 })();

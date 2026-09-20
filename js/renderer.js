@@ -50,6 +50,7 @@ function renderBoard(boardElement, game) {
   const fragment = document.createDocumentFragment();
   const gameIsOver = game.state === "won" || game.state === "lost";
   boardElement.style.setProperty("--columns", game.difficulty.columns);
+  boardElement.style.setProperty("--rows", game.difficulty.rows);
   boardElement.classList.toggle("is-lost", game.state === "lost");
 
   game.cells.forEach((row) => row.forEach((cell) => {
