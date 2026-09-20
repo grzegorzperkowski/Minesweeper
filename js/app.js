@@ -20,6 +20,11 @@ const elements = {
   resultDetails: document.querySelector("#result-details"),
   playAgainButton: document.querySelector("#play-again-button"),
   closeResultButton: document.querySelector("#close-result-button"),
+  confirmDialog: document.querySelector("#confirm-dialog"),
+  confirmTitle: document.querySelector("#confirm-title"),
+  confirmMessage: document.querySelector("#confirm-message"),
+  confirmCancel: document.querySelector("#confirm-cancel"),
+  confirmAccept: document.querySelector("#confirm-accept"),
 };
 
 const THEME_STORAGE_KEY = "minesweeper-theme";
@@ -67,6 +72,7 @@ let game;
 let inputMode = "reveal";
 let timerId = null;
 let timerStartedAt = 0;
+let pendingConfirm = null;
 
 function savedDifficulty() {
   try {
@@ -222,16 +228,56 @@ function render(action) {
 
 function startNewGame(difficultyKey, action = "ready") {
   stopTimer();
+  pendingConfirm = null;
   game = createGame(difficultyKey);
   elements.difficultySelect.value = difficultyKey;
   if (elements.resultDialog.open) elements.resultDialog.close();
+  if (elements.confirmDialog.open) elements.confirmDialog.close();
   render(action);
   saveGame();
   elements.newGameButton.focus();
 }
 
-function confirmRestart() {
-  return !isActiveGame() || window.confirm("Restart this game? Your current progress will be lost.");
+function requestRestart({ title = "Restart this game?", acceptLabel = "New Game", onAccept, onCancel, resumeFocus } = {}) {
+  if (!isActiveGame()) {
+    onAccept();
+    return;
+  }
+  if (elements.confirmDialog.open) return;
+
+  const wasPlaying = game.state === "playing";
+  if (wasPlaying) {
+    updateTimer();
+    stopTimer();
+  }
+
+  pendingConfirm = { onAccept, onCancel, resumeFocus, resumeTimer: wasPlaying };
+  elements.confirmTitle.textContent = title;
+  elements.confirmMessage.textContent = "Your current progress will be lost.";
+  elements.confirmAccept.textContent = acceptLabel;
+  elements.confirmDialog.setAttribute("role", "alertdialog");
+  elements.confirmDialog.showModal();
+  elements.confirmCancel.focus();
+  elements.statusLine.textContent = `${title} Your current progress will be lost.`;
+}
+
+function settleConfirm(accepted) {
+  if (!pendingConfirm) {
+    if (elements.confirmDialog.open) elements.confirmDialog.close();
+    return;
+  }
+  const { onAccept, onCancel, resumeFocus, resumeTimer } = pendingConfirm;
+  pendingConfirm = null;
+  if (elements.confirmDialog.open) elements.confirmDialog.close();
+  elements.confirmDialog.setAttribute("role", "dialog");
+  if (accepted) {
+    onAccept();
+    return;
+  }
+  if (resumeTimer && game.state === "playing") startTimer();
+  if (onCancel) onCancel();
+  (resumeFocus || elements.newGameButton).focus();
+  elements.statusLine.textContent = "New game cancelled. Current progress kept.";
 }
 
 function completeGame(action) {
@@ -305,17 +351,24 @@ elements.revealModeButton.addEventListener("click", () => setMode("reveal"));
 elements.flagModeButton.addEventListener("click", () => setMode("flag"));
 
 elements.newGameButton.addEventListener("click", () => {
-  if (confirmRestart()) startNewGame(game.difficultyKey, "newGame");
+  requestRestart({
+    onAccept: () => startNewGame(game.difficultyKey, "newGame"),
+    resumeFocus: elements.newGameButton,
+  });
 });
 
 elements.difficultySelect.addEventListener("change", () => {
   const requestedDifficulty = elements.difficultySelect.value;
   if (requestedDifficulty === game.difficultyKey) return;
-  if (confirmRestart()) {
-    startNewGame(requestedDifficulty, "newGame");
-  } else {
-    elements.difficultySelect.value = game.difficultyKey;
-  }
+  requestRestart({
+    title: "Change difficulty?",
+    acceptLabel: "Change difficulty",
+    resumeFocus: elements.difficultySelect,
+    onAccept: () => startNewGame(requestedDifficulty, "newGame"),
+    onCancel: () => {
+      elements.difficultySelect.value = game.difficultyKey;
+    },
+  });
 });
 elements.themeToggle.addEventListener("click", () => {
   const nextTheme = activeTheme(document.documentElement.dataset.theme) === "dark" ? "light" : "dark";
@@ -332,7 +385,15 @@ if (typeof systemThemeQuery.addEventListener === "function") {
 
 elements.playAgainButton.addEventListener("click", () => startNewGame(game.difficultyKey, "newGame"));
 elements.closeResultButton.addEventListener("click", () => elements.resultDialog.close());
-elements.resultDialog.addEventListener("close", () => elements.newGameButton.focus());
+elements.resultDialog.addEventListener("close", () => {
+  if (!elements.confirmDialog.open) elements.newGameButton.focus();
+});
+elements.confirmCancel.addEventListener("click", () => settleConfirm(false));
+elements.confirmAccept.addEventListener("click", () => settleConfirm(true));
+elements.confirmDialog.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  settleConfirm(false);
+});
 window.addEventListener("pagehide", saveGame);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveGame();

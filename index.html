@@ -108,6 +108,18 @@
       </div>
     </dialog>
 
+    <dialog id="confirm-dialog" class="result-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+      <div class="result-content">
+        <p class="eyebrow">Start over</p>
+        <h2 id="confirm-title">Restart this game?</h2>
+        <p id="confirm-message">Your current progress will be lost.</p>
+        <div class="dialog-actions">
+          <button id="confirm-cancel" class="button button-secondary" type="button">Cancel</button>
+          <button id="confirm-accept" class="button button-primary" type="button">New Game</button>
+        </div>
+      </div>
+    </dialog>
+
     <script defer src="js/game-state.js"></script>
     <script defer src="js/game-rules.js"></script>
     <script defer src="js/renderer.js"></script>
