@@ -3,18 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark" />
-    <meta id="theme-color" name="theme-color" content="#1b2838" />
+    <meta name="color-scheme" content="light dark" />
+    <meta id="theme-color" name="theme-color" content="#f2f4f7" />
     <meta name="description" content="A polished, offline-ready Minesweeper game." />
     <title>Minesweeper</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icons/icon-192.png" type="image/png" />
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
-    <style>html{background:#111a26;color-scheme:dark}</style>
+    <style id="first-paint">html{background:#f2f4f7;color-scheme:light}</style>
     <script>
       try {
         const savedTheme = localStorage.getItem("minesweeper-theme");
-        if (["system", "light", "dark"].includes(savedTheme)) document.documentElement.dataset.theme = savedTheme;
+        const theme = ["system", "light", "dark"].includes(savedTheme) ? savedTheme : "system";
+        if (savedTheme) document.documentElement.dataset.theme = theme;
+        const dark = theme === "dark" || (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+        const page = dark ? "#182431" : "#f2f4f7";
+        const paint = document.getElementById("first-paint");
+        if (paint) paint.textContent = `html{background:${page};color-scheme:${dark ? "dark" : "light"}}`;
+        const themeColor = document.getElementById("theme-color");
+        if (themeColor) themeColor.content = page;
       } catch {}
     </script>
     <link rel="stylesheet" href="styles.css" />

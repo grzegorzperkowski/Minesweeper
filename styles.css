@@ -1,6 +1,5 @@
 :root {
   --page: #111a26;
-  --page-highlight: #31475c;
   --surface: #f2f4f7;
   --surface-raised: #ffffff;
   --ink: #17212f;
@@ -13,7 +12,6 @@
   --on-danger: #ffffff;
   --success: #167544;
   --focus: #f2b84b;
-  --card-border: rgba(255, 255, 255, .35);
   --counter-background: #1b2530;
   --counter-border: #c7d0d8;
   --counter-ink: #effaef;
@@ -49,13 +47,12 @@
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--ink);
-  background: var(--page);
+  background: var(--surface);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
   --page: #0b1119;
-  --page-highlight: #1e364b;
   --surface: #182431;
   --surface-raised: #233343;
   --ink: #edf4fa;
@@ -68,7 +65,6 @@
   --on-danger: #28080c;
   --success: #67ca99;
   --focus: #ffd166;
-  --card-border: #3f5267;
   --counter-background: #0e1721;
   --counter-border: #586d82;
   --counter-ink: #f2fbf4;
@@ -103,7 +99,6 @@
   :root[data-theme="system"] {
     color-scheme: dark;
     --page: #0b1119;
-    --page-highlight: #1e364b;
     --surface: #182431;
     --surface-raised: #233343;
     --ink: #edf4fa;
@@ -116,7 +111,6 @@
     --on-danger: #28080c;
     --success: #67ca99;
     --focus: #ffd166;
-    --card-border: #3f5267;
     --counter-background: #0e1721;
     --counter-border: #586d82;
     --counter-ink: #f2fbf4;
@@ -154,7 +148,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background: radial-gradient(circle at 15% 5%, var(--page-highlight) 0, var(--page) 38rem);
+  background: var(--surface);
 }
 
 button, select { font: inherit; }
@@ -170,10 +164,6 @@ button:focus-visible, select:focus-visible, .board-scroll:focus-visible, .cell:f
   width: min(100%, max(36rem, calc(var(--columns) * var(--cell-size) + 5.5rem)));
   margin: 0 auto;
   padding: clamp(18px, 3vw, 32px);
-  border: 1px solid var(--card-border);
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: 0 20px 55px rgba(0, 0, 0, .35);
 }
 
 .game-header {
@@ -412,7 +402,7 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
 
 @media (max-width: 650px) {
   :root { --cell-size: 30px; }
-  .game-card { padding: 18px; border-radius: 16px; }
+  .game-card { padding: 18px; }
   .game-header, .game-intro, .controls, .mode-controls { align-items: stretch; flex-direction: column; }
   .game-header .theme-toggle { align-self: flex-start; }
   .game-overview { justify-items: stretch; }
@@ -430,9 +420,9 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
   .cell.is-exploded { outline: 3px solid #4c0f15; outline-offset: -5px; transform: none; }
 }
 
-.playground-link { margin-top: 1.5rem; text-align: center; font-size: .9rem; color: #d5dee8; }
+.playground-link { margin-top: 1.5rem; text-align: center; font-size: .9rem; color: var(--muted); }
 .playground-link a { color: inherit; }
 html .playground-breadcrumb {
-  color: #e8eef4;
-  background: rgb(255 255 255 / 12%);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
 }

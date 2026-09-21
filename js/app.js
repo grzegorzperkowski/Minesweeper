@@ -59,7 +59,7 @@ function setTheme(theme, persist = true) {
   document.documentElement.dataset.theme = selectedTheme;
   elements.themeToggle.setAttribute("aria-checked", String(resolvedTheme === "dark"));
   elements.themeToggle.title = `Switch to ${nextTheme} theme`;
-  document.querySelector("#theme-color").content = resolvedTheme === "dark" ? "#0b1119" : "#111a26";
+  document.querySelector("#theme-color").content = resolvedTheme === "dark" ? "#182431" : "#f2f4f7";
 
   if (!persist) return;
   try {
