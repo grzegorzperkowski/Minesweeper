@@ -95,11 +95,12 @@ function renderStatus(statusElement, game, action) {
     unflagged: "Flag removed.",
     won: "You cleared every safe square. You won!",
     lost: "Mine triggered. Game over.",
+    continued: "That mine click was undone. Keep playing.",
   };
   statusElement.textContent = messages[action] ?? `${stateLabel(game.state)}.`;
 }
 
-function showResult(dialog, elements, game) {
+function showResult(dialog, elements, game, { canContinue = false } = {}) {
   const won = game.state === "won";
   dialog.dataset.result = won ? "won" : "lost";
   elements.resultKicker.textContent = won ? "Board cleared" : "Mine triggered";
@@ -110,6 +111,7 @@ function showResult(dialog, elements, game) {
   elements.resultDetails.textContent = won
     ? `Final time: ${game.timer} seconds · Flags placed: ${game.flagsPlaced}`
     : `Final time: ${game.timer} seconds`;
+  elements.continueGameButton.hidden = won || !canContinue;
   dialog.showModal();
   elements.resultTitle.focus();
 }

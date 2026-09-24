@@ -31,6 +31,7 @@
       flagsPlaced: 0,
       safeCellsRemaining: difficulty.rows * difficulty.columns - difficulty.mines,
       timer: 0,
+      errorUndoUsed: false,
     };
   }
 

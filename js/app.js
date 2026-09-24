@@ -1,6 +1,6 @@
 (() => {
 const { DIFFICULTIES, createGame } = window.MinesweeperState;
-const { revealCell, toggleFlag } = window.MinesweeperRules;
+const { revealCell, toggleFlag, canUndoTriggeredMine, undoTriggeredMine } = window.MinesweeperRules;
 const { renderBoard, renderGameInfo, renderMode, renderStatus, showResult } = window.MinesweeperRenderer;
 
 const elements = {
@@ -20,7 +20,9 @@ const elements = {
   resultMessage: document.querySelector("#result-message"),
   resultDetails: document.querySelector("#result-details"),
   playAgainButton: document.querySelector("#play-again-button"),
+  continueGameButton: document.querySelector("#continue-game-button"),
   closeResultButton: document.querySelector("#close-result-button"),
+  boardScroll: document.querySelector("#board-scroll"),
   confirmDialog: document.querySelector("#confirm-dialog"),
   confirmTitle: document.querySelector("#confirm-title"),
   confirmMessage: document.querySelector("#confirm-message"),
@@ -74,6 +76,8 @@ let inputMode = "reveal";
 let timerId = null;
 let timerStartedAt = 0;
 let pendingConfirm = null;
+let reversibleLossRecord;
+let finishLossFeedback = null;
 
 function savedDifficulty() {
   try {
@@ -144,6 +148,7 @@ function hydrateGame(snapshot) {
   restoredGame.flagsPlaced = flaggedCount;
   restoredGame.safeCellsRemaining = safeCellsRemaining;
   restoredGame.timer = Math.min(999, Math.max(0, snapshot.timer));
+  restoredGame.errorUndoUsed = snapshot.errorUndoUsed === true;
   return restoredGame;
 }
 
@@ -188,6 +193,7 @@ function saveGame() {
         state: game.state,
         minesGenerated: game.minesGenerated,
         timer: game.timer,
+        errorUndoUsed: game.errorUndoUsed === true,
       },
     }));
   } catch {
@@ -282,11 +288,37 @@ function settleConfirm(accepted) {
   elements.statusLine.textContent = "New game cancelled. Current progress kept.";
 }
 
+function readResultRecord() {
+  try {
+    return window.localStorage.getItem(RESULT_STORAGE_KEY);
+  } catch {
+    return undefined;
+  }
+}
+
+function restoreResultRecord(record) {
+  if (record === undefined) return;
+  try {
+    if (record === null) window.localStorage.removeItem(RESULT_STORAGE_KEY);
+    else window.localStorage.setItem(RESULT_STORAGE_KEY, record);
+  } catch {
+    // A continued game keeps the recorded loss when storage cannot be updated.
+  }
+}
+
+function clearLossFeedback() {
+  elements.board.classList.remove("loss-feedback");
+  if (!finishLossFeedback) return;
+  elements.board.removeEventListener("animationend", finishLossFeedback);
+  finishLossFeedback = null;
+}
+
 function completeGame(action) {
   updateTimer();
   stopTimer();
   render(action);
   saveGame();
+  reversibleLossRecord = action === "lost" && canUndoTriggeredMine(game) ? readResultRecord() : undefined;
   try {
     const previous = JSON.parse(window.localStorage.getItem(RESULT_STORAGE_KEY));
     const stats = previous?.version === 1 && previous.app === "minesweeper" && previous.stats && typeof previous.stats === "object" ? previous.stats : {};
@@ -303,18 +335,43 @@ function completeGame(action) {
     }));
   } catch { /* Results are optional when storage is unavailable. */ }
   if (action === "lost") {
-    elements.board.classList.remove("loss-feedback");
+    clearLossFeedback();
     // Force a new animation even if an earlier loss class has not painted yet.
     void elements.board.offsetWidth;
     elements.board.classList.add("loss-feedback");
-    const finishLossFeedback = (event) => {
+    finishLossFeedback = (event) => {
       if (event.target !== elements.board) return;
-      elements.board.classList.remove("loss-feedback");
-      elements.board.removeEventListener("animationend", finishLossFeedback);
+      clearLossFeedback();
     };
     elements.board.addEventListener("animationend", finishLossFeedback);
   }
-  showResult(elements.resultDialog, elements, game);
+  showResult(elements.resultDialog, elements, game, {
+    canContinue: action === "lost" && canUndoTriggeredMine(game),
+  });
+}
+
+function continueAfterLoss() {
+  const exploded = elements.board.querySelector(".cell.is-exploded");
+  const row = exploded?.dataset.row;
+  const column = exploded?.dataset.column;
+  if (!undoTriggeredMine(game)) return;
+
+  restoreResultRecord(reversibleLossRecord);
+  reversibleLossRecord = undefined;
+  clearLossFeedback();
+  if (elements.resultDialog.open) elements.resultDialog.close();
+  render("continued");
+  saveGame();
+  if (game.state === "playing") startTimer();
+
+  const focusContinuedCell = () => {
+    const restoredCell = row != null
+      ? elements.board.querySelector(`[data-row="${row}"][data-column="${column}"]`)
+      : null;
+    (restoredCell || elements.boardScroll).focus();
+  };
+  focusContinuedCell();
+  window.setTimeout(focusContinuedCell, 0);
 }
 
 function actOnCell(row, column, action) {
@@ -386,9 +443,11 @@ if (typeof systemThemeQuery.addEventListener === "function") {
 }
 
 elements.playAgainButton.addEventListener("click", () => startNewGame(game.difficultyKey, "newGame"));
+elements.continueGameButton.addEventListener("click", continueAfterLoss);
 elements.closeResultButton.addEventListener("click", () => elements.resultDialog.close());
 elements.resultDialog.addEventListener("close", () => {
-  if (!elements.confirmDialog.open) elements.newGameButton.focus();
+  if (elements.confirmDialog.open || game.state === "playing") return;
+  elements.newGameButton.focus();
 });
 elements.confirmCancel.addEventListener("click", () => settleConfirm(false));
 elements.confirmAccept.addEventListener("click", () => settleConfirm(true));

@@ -387,6 +387,7 @@ select { min-height: 42px; padding: 8px 34px 8px 10px; border-color: var(--contr
 .result-details { padding: 10px; border-radius: 8px; background: var(--surface-raised); color: var(--ink) !important; font-weight: 750; }
 .dialog-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 .dialog-actions .button { flex: 1 1 8rem; }
+#continue-game-button { flex-basis: 100%; }
 
 @keyframes board-shake {
   0%, 100% { transform: translateX(0); background-color: var(--board-frame); }

@@ -81,6 +81,27 @@ function revealMinesAndMarkMistakes(game) {
   });
 }
 
+// Intermediate and expert can take back one losing click per game. Beginner cannot.
+function canUndoTriggeredMine(game) {
+  return !!game
+    && game.state === "lost"
+    && game.errorUndoUsed !== true
+    && (game.difficultyKey === "intermediate" || game.difficultyKey === "expert");
+}
+
+function undoTriggeredMine(game) {
+  if (!canUndoTriggeredMine(game)) return false;
+
+  forEachCell(game, (cell) => {
+    if (cell.mine) cell.revealed = false;
+    cell.exploded = false;
+    cell.wrongFlag = false;
+  });
+  game.state = "playing";
+  game.errorUndoUsed = true;
+  return true;
+}
+
 function applyMineLayout(game, isMine) {
   forEachCell(game, (cell) => {
     cell.mine = isMine(cell);
@@ -424,5 +445,12 @@ function toggleFlag(game, row, column) {
   return { kind: cell.flagged ? "flagged" : "unflagged" };
 }
 
-window.MinesweeperRules = Object.freeze({ getNeighbors, generateMines, revealCell, toggleFlag });
+window.MinesweeperRules = Object.freeze({
+  getNeighbors,
+  generateMines,
+  revealCell,
+  toggleFlag,
+  canUndoTriggeredMine,
+  undoTriggeredMine,
+});
 })();
