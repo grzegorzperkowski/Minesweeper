@@ -90,6 +90,7 @@ function renderStatus(statusElement, game, action) {
     newGame: "New game ready. Reveal a square to place the mines and begin.",
     restored: "Saved game restored.",
     revealed: "Square revealed.",
+    rescued: "That square wasn't determined, so it stayed safe.",
     flagged: "Flag placed.",
     unflagged: "Flag removed.",
     won: "You cleared every safe square. You won!",
